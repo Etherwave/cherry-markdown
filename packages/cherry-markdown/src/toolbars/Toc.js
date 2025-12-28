@@ -22,6 +22,7 @@ export default class Toc {
     this.$cherry = options.$cherry;
     this.editor = options.$cherry.editor.editor;
     this.tocStr = '';
+    this.id = options.id ?? 'cherry-toc';
     this.updateLocationHash = options.updateLocationHash ?? true;
     this.defaultModel = options.defaultModel ?? 'full';
     this.showAutoNumber = options.showAutoNumber ?? false;
@@ -60,12 +61,33 @@ export default class Toc {
   }
 
   drawDom() {
-    const tocDom = createElement(
-      'div',
-      `cherry-flex-toc cherry-flex-toc__pure${this.showAutoNumber ? ' auto-num' : ''}`,
-    );
-    if (this.position === 'fixed') {
-      tocDom.classList.add('cherry-flex-toc__fixed');
+    let tocDom = document.getElementById(this.id);
+    const isExistingToc = !!tocDom; // 标记是否是已有元素
+    const isRelativeMode = this.position === 'relative';
+    const cherry_theme_default_class = ["cherry", "theme__default"];
+
+    if (isExistingToc) {
+      // 如果已存在，重置类名（关键！）
+      if (isRelativeMode) {
+        tocDom.classList.add('cherry-toc-container');
+        tocDom.classList.add(...cherry_theme_default_class);
+      } else {
+        tocDom.className = `cherry-flex-toc${this.showAutoNumber ? ' auto-num' : ''}`;
+      }
+    } else {
+       // 创建新元素时，根据模式决定基础类名
+      const baseClass = isRelativeMode 
+        ? 'cherry-toc-container' 
+        : `cherry-flex-toc cherry-flex-toc__pure${this.showAutoNumber ? ' auto-num' : ''}`;
+      
+      tocDom = createElement('div', baseClass, { id: this.id });
+    }
+
+    // 添加模式特有类（用于 CSS 控制）
+    if (!isRelativeMode) {
+      if (this.position === 'fixed') {
+        tocDom.classList.add('cherry-flex-toc__fixed');
+      }
     }
 
     if (this.cssText.length > 0) {
@@ -80,14 +102,18 @@ export default class Toc {
     this.tocClose = tocClose;
     this.tocOpen = tocOpen;
     tocHead.appendChild(tocTitle);
-    tocHead.appendChild(tocClose);
-    tocHead.appendChild(tocOpen);
+    if (!isExistingToc) {
+      tocHead.appendChild(tocClose);
+      tocHead.appendChild(tocOpen);
+    }
     tocDom.appendChild(tocHead);
     const tocListDom = createElement('div', 'cherry-toc-list');
     this.tocListDom = tocListDom;
     tocDom.appendChild(tocListDom);
     this.tocDom = tocDom;
-    this.$cherry.wrapperDom.appendChild(tocDom);
+    if (!isExistingToc) {
+      this.$cherry.wrapperDom.appendChild(tocDom);
+    }
     this.bindClickEvent();
   }
 

@@ -1637,6 +1637,96 @@
   }
 }
 
+
+/* 嵌入式 TOC 容器 —— 完全由外部 div 控制布局 */
+.cherry-toc-container {
+  /* 不设置 position / width / height / top / right 等 */
+  /* 让它像普通 div 一样流式布局 */
+  display: block;
+  box-sizing: border-box;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-md);
+  max-width: 100%;
+  overflow-x: hidden;
+
+  /* 内部结构复用原有样式（可选） */
+  .cherry-toc-head {
+    border-bottom: 1px dashed #33333333;
+    padding: 5px;
+    position: relative; /* 仅 head 内部需要 */
+    .cherry-toc-title {
+      font-size: var(--font-size-md);
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    .ch-icon {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      cursor: pointer;
+      padding: 5px;
+      &:hover {
+        color: #3582fb;
+      }
+    }
+    .ch-icon-chevronsLeft {
+      display: none;
+    }
+  }
+
+  .cherry-toc-list {
+    max-height: 400px; /* 可滚动，但高度由内容或容器限制 */
+    overflow-y: auto;
+    padding: 5px 0;
+    margin-top: 5px;
+
+    .cherry-toc-one-a {
+      display: block;
+      text-decoration: none;
+      color: #000;
+      border-left: 3px solid var(--md-toc-indicator-color);
+      padding: 4px 8px 4px 12px;
+      margin: 2px 0;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover,
+      &.current {
+        border-left-color: var(--primary-color);
+        color: var(--primary-color);
+      }
+
+      &.cherry-toc-one-a__1 { font-weight: bold; padding-left: 12px; }
+      &.cherry-toc-one-a__2 { padding-left: 24px; }
+      &.cherry-toc-one-a__3 { padding-left: 36px; }
+      &.cherry-toc-one-a__4 { padding-left: 48px; }
+      &.cherry-toc-one-a__5 { padding-left: 60px; }
+    }
+  }
+
+  /* 纯模式（折叠）在嵌入式中可能不需要，可选支持 */
+  &.cherry-flex-toc__pure {
+    .cherry-toc-head .cherry-toc-title { display: none; }
+    .cherry-toc-head .ch-icon-chevronsRight { display: none; }
+    .cherry-toc-head .ch-icon-chevronsLeft { display: inline; }
+    .cherry-toc-list {
+      .cherry-toc-one-a {
+        height: auto;
+        padding: 2px 0;
+        border-left-width: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
+
+
 /** 引入自带的主题 */
 @import './themes/default.scss';
 @import './themes/dark.scss';

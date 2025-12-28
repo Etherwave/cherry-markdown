@@ -323,6 +323,7 @@ export default class Cherry extends CherryStatic {
     this.toc = new Toc({
       $cherry: this,
       // @ts-ignore
+      id: this.options.toolbars.toc.id ?? 'cherry-toc',
       updateLocationHash: this.options.toolbars.toc.updateLocationHash ?? true,
       // @ts-ignore
       position: this.options.toolbars.toc.position ?? 'absolute',
